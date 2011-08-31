@@ -119,8 +119,14 @@ dateFormat.i18n = {
 	]
 };
 
+/*
 // For convenience...
 Date.prototype.format = function (mask, utc) {
 	return dateFormat(this, mask, utc);
 };
+*/
+
+if(typeof exports !== "undefined") {
+	module.exports = dateFormat;
+}
 
