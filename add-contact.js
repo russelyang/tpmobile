@@ -31,13 +31,13 @@ mobile.login(user, function(res){
 			}
 		};
 	
-	for(var i=0; i<10; i++) {
+	for(var i=0; i<94; i++) {
 		var req = https.request(options, function(res) {
 			  res.on('data', function(d) {
 			    console.log(JSON.parse(d).id);
 			  });
 			});
-		contact.primaryPerson.firstName = "node.js.frist" + i;
+		contact.primaryPerson.firstName = "node.js.total94-" + i;
 		req.write(JSON.stringify(contact));
 		req.end();			
 	}
