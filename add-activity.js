@@ -1,10 +1,11 @@
 var mobile = require('./login');
+var config = require('./config');
+var dateFormat = require('./dateFormat');
 
-var user = {
-		name : "russel.yang",
-		password : "toptop",
-		token : 'd0be5f82-44c8-4686-aa13-c58e8ee910b7'
-};
+var users = config.getUsers();
+var servers = config.getServers();
+
+
 
 var activity =  
 		{
@@ -21,29 +22,40 @@ var activity =
 		"unlinkedContacts":[],
 		"timeRange":3};
 
-mobile.login(user, function(res){
-	var https = require('https');
-
-	var options = {
-			host : 'tpoitgf8i.tpolab.com',
-			port : 443,
-			path : '/dataservice/contact.svc/add',
-			method : 'POST',
-			headers : {
-				'token' : res.token,
-				'content-type' : 'application/json; charset=UTF-8'
-			}
-		};
-	
-	for(var i=0; i<94; i++) {
-		var req = https.request(options, function(res) {
-			  res.on('data', function(d) {
-			    console.log(JSON.parse(d).id);
-			  });
-			});
-		contact.primaryPerson.firstName = "node.js.total94-" + i;
-		req.write(JSON.stringify(contact));
-		req.end();			
-	}
+servers.forEach(function(server){
+	console.log(server);
+	users.forEach(function(user){
+		console.log(user);
+		mobile.login(server, user, function(userHash){
+			console.log(userHash);
+			activity.assignedToId = userHash.userId;
+			activity.assignedTo = userHash.firstName + " " + userHash.lastName;
+			activity.startOfEvent = dateFormat(new Date(), "isoDateTime");
+			activity.endOfEvent = dateFormat(new Date(), "isoDateTime");
+			activity.description = "node.js description " + dateFormat(new Date(), "isoTime");
+			
+			var https = require('https');
+			
+			var options = {
+					host : server.host,
+					port : server.port || '443',
+					path : '/dataservice/activity.svc/save',
+					method : 'POST',
+					headers : {
+						'token' : userHash.token,
+						'content-type' : 'application/json; charset=UTF-8'
+					}
+				};	
+			
+			console.log(options);
+			
+			var req = https.request(options, function(res) {
+				  res.on('data', function(d) {
+				    console.log(d.toString());
+				  });
+				});
+			req.write(JSON.stringify(activity));
+			req.end();			
+		})
+	})
 });
-

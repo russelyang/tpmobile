@@ -1,10 +1,10 @@
-exports.login = function(user, callback)
+exports.login = function(server, user, callback)
 {
 	var https = require('https');
 
 	var options = {
-			host : 'tpoitgf8i.tpolab.com',
-			port : 443,
+			host : server.host,
+			port : server.port||'443',
 			path : '/dataservice/login.svc/Login',
 			method : 'POST',
 			headers : {
